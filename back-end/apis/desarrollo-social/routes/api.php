@@ -46,6 +46,7 @@ Route::get('parentescos',[ParentescosController::class,'index']);
 Route::get('tipo-sangre',[TipSangreController::class,'index']);
 
 Route::post('personas',[PersonasController::class,'store']);
+Route::post('pre-inscripcion',[PersonasController::class,'preInscripcion']);
 
 Route::prefix('direcciones')->group(function(){
     Route::get('index/{id?}',[DireccionesController::class,'index']);

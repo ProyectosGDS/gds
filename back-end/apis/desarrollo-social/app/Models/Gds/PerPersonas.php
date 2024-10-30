@@ -54,4 +54,6 @@ class PerPersonas extends Model
         return $this->hasMany(PerResponsables::class,'persona_id','id');
     }
 
+
+
 }

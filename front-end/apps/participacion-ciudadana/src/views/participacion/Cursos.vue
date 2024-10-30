@@ -1,9 +1,11 @@
 <script setup>
     import { onMounted } from 'vue'
     import { usePortafolioStore } from '@/stores/portafolio'
+    import { usePersonaStore } from '@/stores/persona'
     import DataCard from '@/components/DataCard.vue'
 
     const store = usePortafolioStore()
+    const personaStore = usePersonaStore()
 
     onMounted(() => {
         store.fetch()
@@ -12,18 +14,23 @@
 </script>
 
 <template>
-    
-    <div>
-        <ul class="flex flex-wrap justify-center gap-4 text-violet-400">
-            <li v-for="direccion in store.direcciones">{{ direccion.nombre }}</li>
-        </ul>
-    </div>
+<!--    
+     -->
 
     <hr class="my-4">
-
     <div v-if="store.openDetails">
-        <h1 class="text-2xl text-gray-500 font-semibold">Cursos disponibles</h1>
-        <br>
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl text-gray-500 font-semibold">Cursos disponibles</h1>
+            <select class="input w-1/3">
+                <option value="" disabled>Seleccione un filtro</option>
+                <option value="">Salud y belleza</option>
+                <option value="">Manualidades</option>
+                <option value="">Arte y cultura</option>
+                <option value="">Deportes</option>
+                <option value="" selected>Todos</option>
+            </select>
+        </div>
+        <br>    
         <DataCard :data="store.portafolios">
             <template #body="{item}">
                 <h1 class="font-semibold text-blue-muni text-2xl">
@@ -35,7 +42,7 @@
                 <small class="text-blue-muni uppercase">{{ item.programa.escuela.direccion }}</small>
                 <div>
                     <p class="">
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vitae iste minima quae id aut cum, unde veritatis voluptatibus dolor voluptate similique enim, tempora ipsum! Eligendi recusandae reiciendis minus odio id!
+                        {{ item.curso.descripcion }}
                     </p>
                 </div>
             </template>
@@ -68,7 +75,7 @@
                         <li class="flex gap-3 items-center">
                             <Icon icon="fas fa-city" />
                             <span>Sede :</span>
-                            <span>{{ store.portafolio.programa.escuela.direccion }}</span>
+                            <span class="uppercase">{{ `${store.portafolio.sede.direccion} ZONA ${store.portafolio.sede.zona.numero} ${store.portafolio.sede.nombre}` }}</span>
                         </li>
                         <li class="flex gap-3 items-center">
                             <Icon icon="fas fa-calendar-days" />
@@ -114,42 +121,38 @@
                         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia ipsa quasi esse, vero sit nihil modi neque nemo quaerat ratione soluta officiis dignissimos ut, laudantium unde pariatur nobis, tempora consequatur?
                     </p>
                 </div>
-                <div class="h-[80%] flex items-center justify-center">
-                    <Button @click="store.openModalView = true " text="Inscribete" class="bg-blue-muni text-white rounded-full h-16 w-40 text-3xl" />
+                <br>
+                <div class="flex xl:h-[50%]">
+                    <Button @click="personaStore.openModalNew = true " text="Inscribete" class="bg-blue-muni text-white rounded-full h-16 w-40 text-3xl self-center mx-auto" />
                 </div>
             </div>
         </div>
     </div>
-
-    <Modal :open="store.openModalView" title="Ficha de inscripcion" icon="fa fa-file-signature">
+    <Modal :open="personaStore.openModalNew" title="Ficha de inscripcion" icon="fa fa-file-signature" class="w-1/2">
         <template #close>
-            <Icon @click="store.openModalView = false" icon="fas fa-xmark" class="text-xl text-violet-200" />
+            <Icon @click="personaStore.resetData()" icon="fas fa-xmark" class="text-xl text-violet-200" />
         </template>
-        <div class="grid gap-3">
-
-            primer_nombre
-            segundo_nombre
-            tercer_nombre
-            primer_apellido
-            segundo_apellido
-            apellido_casada
-            cui,
-            correo electrónico,
-            teléfono,
-             
-            <Input option="label" title="Primer nombre" :error="false" />
-            <Input option="label" title="Segundo nombre" :error="false" />
-            <Input option="label" title="Tercer nombre" :error="false" />
-            <Input option="label" title="Primer apellido" :error="false" />
-            <Input option="label" title="Segundo apellido" :error="false" />
-            <Input option="label" title="apellido de casada" :error="false" />
-            <Input option="label" title="cui" :error="false" />
-            <Input type="email" option="label" title="correo electronico" :error="false" />
-            <Input type="tel" option="label" title="teléfono" :error="false" />
+        <div class="grid grid-cols-3 gap-3">
+            <fieldset class="grid grid-cols-3 gap-3 col-span-3 border p-4 rounded-lg">
+                <legend class="text-violet-400 font-semibold uppercase px-4">Nombre</legend>
+                <Input v-model="personaStore.persona.primer_nombre" option="label" title="Primer nombre" :error="personaStore.errors.hasOwnProperty('primer_apellido')" />
+                <Input v-model="personaStore.persona.segundo_nombre" option="label" title="Segundo nombre" />
+                <Input v-model="personaStore.persona.tercer_nombre" option="label" title="Tercer nombre" />
+            </fieldset>
+            <fieldset class="grid grid-cols-3 gap-3 col-span-3 border p-4 rounded-lg">
+                <legend class="text-violet-400 font-semibold uppercase px-4">Apellido</legend>
+                <Input v-model="personaStore.persona.primer_apellido" option="label" title="Primer apellido" :error="personaStore.errors.hasOwnProperty('primer_apellido')" />
+                <Input v-model="personaStore.persona.segundo_apellido" option="label" title="Segundo apellido" />
+                <Input v-model="personaStore.persona.apellido_casada" option="label" title="apellido de casada" />
+            </fieldset>
+            <Input v-model="personaStore.persona.cui" option="label" title="cui" :error="personaStore.errors.hasOwnProperty('cui')" />
+            <Input v-model="personaStore.persona.correo" type="email" option="label" title="correo electronico" :error="personaStore.errors.hasOwnProperty('celular')" />
+            <Input v-model="personaStore.persona.celular" type="tel" option="label" title="Celular" :error="personaStore.errors.hasOwnProperty('correo')" />
         </div>
+        <Validate-Errors v-if="personaStore.errors != 0" :errors="personaStore.errors" />
         <template #footer>
-            <Button @click="store.openModalView = false" text="Cancelar" icon="fas fa-xmark" class="btn-dark rounded-full"/>
-            <Button text="Aceptar" icon="fas fa-check" class="btn-danger rounded-full"/>
+            <Button @click="personaStore.resetData()" text="Cancelar" icon="fas fa-xmark" class="btn-dark rounded-full"/>
+            <Button @click="personaStore.store" text="Aceptar" icon="fas fa-check" class="btn-danger rounded-full"/>
         </template>
     </Modal>
 
