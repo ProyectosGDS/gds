@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, nextTick, watchEffect } from 'vue'
+import { computed, ref, onMounted, nextTick, watchEffect, onBeforeMount } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 
     const props = defineProps({
@@ -43,7 +43,7 @@ import { onClickOutside } from '@vueuse/core'
     }
 
     const displayValue = computed(() => {
-        if (item.value.id) {
+        if (item.value[props.fields[0]]) {
             try {
                 return new Function('item', `return ${props.format}`)(item.value)
             } catch (error) {
@@ -108,19 +108,27 @@ import { onClickOutside } from '@vueuse/core'
         focusedIndex.value = -1
     }
 
-    watchEffect(() => {
+    watchEffect(async () => {
+
         if(props.modelValue == '') {
             item.value = {}
         }
-    })
 
+        if(props.fields.length > 0) {
+            item.value = await props.items.find(item => item[props.fields[0]] === props.modelValue)
+        }
+
+    })
+    
     onMounted(() => {
         document.addEventListener('keydown', handleKeydown)
+        
+        
     })
 
 </script>
 
-<template>
+<template v-if="props.items.length > 0 && props.fields.length > 0">
     <div ref="target" class="w-full">
         <div class="flex items-center space-x-2 input bg-white" :class="{'border-red-500' : props.error }" >
             <input :placeholder="props.placeholder" :value="props.format ? displayValue : item[props.fields[1]]" readonly @click="openDropdown" @focus="openDropdown" class="focus:outline-none w-full h-12 placeholder:text-violet-400" />

@@ -15,17 +15,30 @@ const router = createRouter({
 				{
 					path: 'cursos',
 					name: 'Cursos libres',
-					component: () => import('@/views/participacion/Cursos.vue'),
+					redirect : { name : 'Cursos'},
+					children : [
+						{
+							path: '',
+							name : 'Cursos',
+							component: () => import('@/views/Cursos.vue'),
+						},
+						{
+							path: 'detalle-curso/:curso_id',
+							name: 'Detalle del curso',
+							component: () => import('@/views/DetalleCurso.vue'),
+							props : true,
+						}
+					]
 				},
 				{
 					path: 'eventos',
 					name: 'Eventos',
-					component: () => import('@/views/participacion/Eventos.vue'),
+					component: () => import('@/views/Eventos.vue'),
 				},
 				{
 					path: 'servicios',
 					name: 'Servicios',
-					component: () => import('@/views/participacion/Servicios.vue'),
+					component: () => import('@/views/Servicios.vue'),
 				},
 				
 			]

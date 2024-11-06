@@ -19,7 +19,7 @@
     <Transition>
         <div v-show="props.open" class ='inset-0 fixed h-screen bg-gray-900 bg-opacity-30 z-30 overflow-y-auto'>
             <div  class="relative flex justify-center mt-6">
-                <div class = "bg-white mx-4 max-w-4xl min-w-min rounded-xl shadow-lg overflow-hidden" v-bind="$attrs">
+                <div class = "bg-white mx-4 max-w-full min-w-96 rounded-xl shadow-lg overflow-hidden" v-bind="$attrs">
                     <header v-if="$props.title" class="flex items-center justify-between py-2 relative px-2 bg-violet-600">
                         <div class="flex items-center gap-x-2 text-violet-50">
                             <Icon v-if="props.icon" :icon="props.icon" class="text-2xl" />

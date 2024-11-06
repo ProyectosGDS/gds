@@ -30,7 +30,7 @@
 </script>
 
 <template>
-    <div class="overflow-hidden max-w-full relative z-30">
+    <div class="overflow-hidden max-w-full relative ">
         <div ref="track" class="flex transition-transform ease-in-out duration-300">
           <div v-for="(src, index) in props.images" class="flex-none" :style="{ flex: '0 0 100%' }">
             <img :src="src" alt="Carousel Item" :key="index"/>
