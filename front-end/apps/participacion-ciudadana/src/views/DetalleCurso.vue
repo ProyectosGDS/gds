@@ -1,7 +1,7 @@
 <script setup>
     import { useCursosStore } from '@/stores/cursos'
     import { useInscripcionStore } from '@/stores/inscripcion'
-    import { ref, watchEffect } from 'vue';
+    import { onMounted, ref, watchEffect } from 'vue'
     import Steps from '@/components/Steps.vue'
 
     import DatosPersonales from './inscripcion/datos-personales/DatosPersonales.vue'
@@ -42,6 +42,17 @@
     }
 
     watchEffect(() => store.show(props.curso_id))
+
+    onMounted(() => {
+
+        if(!localStorage.getItem('catalogos')) {
+            inscripcion.fetchCatalogos()
+        }
+
+        if(!localStorage.getItem('campos-registro')) {
+            store.fieldFormByDirection()
+        }
+    })
     
 </script>
 
@@ -122,9 +133,11 @@
             </div>
         </div>
     </div>
-    <Modal :open="inscripcion.openModal.form" title="Formulario de inscripción" icon="fas fa-clipboard-list">
+    <Modal :open="inscripcion.openModal.form" title="Formulario de inscripción" icon="fas fa-clipboard-list" class="w-2/3">
         <div>
-            <Steps :steps="steps" :components="components" />
+            <form >
+                <Steps :steps="steps" :components="components" />
+            </form>
         </div>
         <template #footer>
             <Button @click="inscripcion.resetData()" text="Cancelar" icon="fas fa-xmark" class="btn-dark rounded-full" />

@@ -1,6 +1,7 @@
 <script setup>
+    import DatosGenerales from './DatosGenerales.vue'
 </script>
 
 <template>
-    hola desde datos personales
+    <DatosGenerales />
 </template>

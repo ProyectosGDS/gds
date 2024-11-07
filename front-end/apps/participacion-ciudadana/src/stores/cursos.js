@@ -42,6 +42,12 @@ export const useCursosStore = defineStore('cursos', () => {
         router.push({name:'Detalle del curso',params:{ curso_id : item.id }})
     }
 
+    async function fieldFormByDirection () {
+        axios.get('campos-registro')
+        .then(response => localStorage.setItem('campos-registro',JSON.stringify(response.data)))
+        .catch(error => console.error(error))
+    }
+
     return {
         router,
         cursos,
@@ -52,5 +58,6 @@ export const useCursosStore = defineStore('cursos', () => {
         fetch,
         detalleCurso,
         show,
+        fieldFormByDirection,
     }
 })
