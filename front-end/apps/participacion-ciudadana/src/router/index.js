@@ -10,16 +10,16 @@ const router = createRouter({
 			path: '/',
 			name: 'Participacion ciudadana',
 			component: Layout,
-			redirect : { name : 'Cursos libres'},
+			redirect : { name : 'Cursos'},
 			children : [
 				{
 					path: 'cursos',
-					name: 'Cursos libres',
-					redirect : { name : 'Cursos'},
+					name: 'Cursos',
+					redirect : { name : 'Cursos1'},
 					children : [
 						{
 							path: '',
-							name : 'Cursos',
+							name : 'Cursos1',
 							component: () => import('@/views/Cursos.vue'),
 						},
 						{

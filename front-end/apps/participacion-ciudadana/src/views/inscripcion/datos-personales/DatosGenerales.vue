@@ -1,59 +1,96 @@
 <script setup>
     import { useInscripcionStore } from '@/stores/inscripcion'
-    import { useCursosStore } from '@/stores/cursos'
-    import { computed, onBeforeMount, watchEffect } from 'vue'
-
+    
     const store = useInscripcionStore()
-    const cursoStore = useCursosStore()
 
-    watchEffect(() => {
-        store.changePais()
-        store.changeDepartamento()
-    })
-
-    function checkField(fieldname) {
-        const direcciones = store.camposRegistro.find(item => item.campo === fieldname ).di_direcciones
+    async function checkField(fieldname) {
+        const direcciones = await store.camposRegistro.find(item => item.campo === fieldname ).di_direcciones
        return direcciones.includes(store.datos.di_direccion_id)
     }
 
+    function verifyCui() {
+        const cui = store.cui;
 
-    onBeforeMount(() => {
-
-        store.datos.di_direccion_id = cursoStore.curso.programa.di_direccion_id
-        
-        const storedCatalogos = localStorage.getItem('catalogos')
-        const storedCamposRegistro = localStorage.getItem('campos-registro')
-        
-        if (storedCatalogos) {
-            store.catalogos = JSON.parse(storedCatalogos)
+        if(!cui){
+            store.errors = { cui: ['Ingrese cui'] }
+            store.success = false
+            return false 
         }
-        
-        if (storedCamposRegistro) {
-            store.camposRegistro = JSON.parse(storedCamposRegistro)
-        }
-        
-    })
 
+        if (cui.length !== 13 || !/^[0-9]{4}\s?[0-9]{5}\s?[0-9]{4}$/.test(cui)) {
+            store.errors = { cui: ['cui invalido'] }
+            store.success = false
+            return false
+        }
+
+        const cleanCui = cui.replace(/\s/g, '');
+        const depto = parseInt(cleanCui.substring(9, 11), 10);
+        const muni = parseInt(cleanCui.substring(11, 13), 10);
+        const numero = cleanCui.substring(0, 8);
+        const verificador = parseInt(cleanCui.substring(8, 9), 10);
+
+        const munisPorDepto = [
+            { id: 1, cantidad: 17 }, { id: 2, cantidad: 8 }, { id: 3, cantidad: 16 },
+            { id: 4, cantidad: 16 }, { id: 5, cantidad: 13 }, { id: 6, cantidad: 14 },
+            { id: 7, cantidad: 19 }, { id: 8, cantidad: 8 }, { id: 9, cantidad: 24 },
+            { id: 10, cantidad: 21 }, { id: 11, cantidad: 9 }, { id: 12, cantidad: 30 },
+            { id: 13, cantidad: 32 }, { id: 14, cantidad: 21 }, { id: 15, cantidad: 8 },
+            { id: 16, cantidad: 17 }, { id: 17, cantidad: 14 }, { id: 18, cantidad: 5 },
+            { id: 19, cantidad: 11 }, { id: 20, cantidad: 11 }, { id: 21, cantidad: 7 },
+            { id: 22, cantidad: 17 }
+        ];
+
+        if (depto === 0 || muni === 0 || depto > munisPorDepto.length || muni > munisPorDepto[depto - 1].cantidad) {
+            store.errors = { cui: ['cui invalido'] }
+            store.success = false
+            return false
+        }
+
+        const total = numero.split('').reduce((acc, digit, index) => acc + digit * (index + 2), 0)
+
+
+        if (total % 11 === verificador) {
+            store.fetchBeneficiarioUnico(cleanCui)
+            store.success = true
+            return true
+        }
+
+        store.errors = { cui: ['cui invalido'] }
+        store.success = false
+        return false
+    }
 
 </script>
 
 <template>
-    <div class="grid gap-4 text-violet-400" >
+    
+    <div>
+        <div>
+            <span class="uppercase">Busqueda por cui</span>
+            <div class="flex items-center justify-between gap-2">
+                <input @keyup.enter="verifyCui()" @keyup="verifyCui()" v-model="store.cui" placeholder="Ingrese cui" autofocus type="search" maxlength="13" minlength="13" class="input focus:outline-none" :class="{'focus:border-red-400 border-red-400':store.errors.hasOwnProperty('cui'), 'focus:border-green-500 border-gree-500' : store.success }" required >
+                <Button @click="verifyCui()" text="Buscar cui" icon="fas fa-search" class="btn-primary rounded-lg text-nowrap" :loading="store.loading.searchBeneficiario" />
+            </div>
+        </div>
+        <span v-if="store.errors.hasOwnProperty('cui')" class="text-red-400 text-xs uppercase">
+            {{ store.errors?.cui[0] }}
+        </span>
+        <br>
         <details :open="true" class="border p-4 rounded-lg border-violet-400">
             <summary>DATOS GENERALES</summary>
             <br>
             <div class="flex flex-wrap gap-4">
-                <div v-if="checkField('cui')" class="grow">
-                    <span class="uppercase">cui/dpi</span>
-                    <input v-model="store.datos.cui" type="text" maxlength="13" minlength="13" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('cui')}" required >
+                <div class="grow">
+                    <span class="uppercase">cui</span>
+                    <input v-model="store.datos.cui" type="text" maxlength="13" minlength="13" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('cui')}">
                 </div>
                 <div v-if="checkField('nit')" class="grow">
                     <span class="uppercase">nit</span>
-                    <input v-model="store.datos.nit" type="text" maxlength="13" minlength="13" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('nit')}" >
+                    <input v-model="store.datos.nit" type="text" maxlength="13" minlength="13" class="input focus:outline-none">
                 </div>
                 <div v-if="checkField('pasaporte')" class="grow">
                     <span class="uppercase">pasaporte</span>
-                    <input v-model="store.datos.pasaporte" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('pasaporte')}" >
+                    <input v-model="store.datos.pasaporte" type="text" class="input focus:outline-none" >
                 </div>
             </div>
     
@@ -64,11 +101,11 @@
                 </div>
                 <div v-if="checkField('segundo_nombre')" class="grow">
                     <span class="uppercase">segundo nombre</span>
-                    <input v-model="store.datos.segundo_nombre" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('segundo_nombre')}" >
+                    <input v-model="store.datos.segundo_nombre" type="text" class="input focus:outline-none" >
                 </div>
                 <div v-if="checkField('tercer_nombre')" class="grow">
                     <span class="uppercase">tercer nombre</span>
-                    <input v-model="store.datos.tercer_nombre" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('tercer_nombre')}" >
+                    <input v-model="store.datos.tercer_nombre" type="text" class="input focus:outline-none" >
                 </div>
             </div>
     
@@ -79,11 +116,11 @@
                 </div>
                 <div v-if="checkField('segundo_apellido')" class="grow">
                     <span class="uppercase">segundo apellido</span>
-                    <input v-model="store.datos.segundo_apellido" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('pasaporte')}" >
+                    <input v-model="store.datos.segundo_apellido" type="text" class="input focus:outline-none" >
                 </div>
                 <div v-if="checkField('apellido_casada')" class="grow">
                     <span class="uppercase">apellido de casada</span>
-                    <input v-model="store.datos.apellido_casada" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('pasaporte')}" >
+                    <input v-model="store.datos.apellido_casada" type="text" class="input focus:outline-none" >
                 </div>
             </div>
     
@@ -92,7 +129,7 @@
                     <span class="uppercase">sexo</span>
                     <div class="flex items-center gap-3">
                         <Icon icon="fas fa-person-dress" class="text-fuchsia-500 text-5xl" />
-                        <Switch class="w-14 h-7 bg-blue-500 has-[:checked]:bg-fuchsia-500" :values="['m','h']" v-model="store.datos.sexo" :error="store.errors.hasOwnProperty('sexo')" />
+                        <Switch class="w-14 h-7 bg-blue-500 has-[:checked]:bg-fuchsia-500" :values="['F','M']" v-model="store.datos.sexo" :error="store.errors.hasOwnProperty('sexo')" />
                         <Icon icon="fas fa-person" class="text-blue-500 text-5xl" />
                     </div>
                 </div>
@@ -113,64 +150,5 @@
             </div>
         </details>
 
-        <details class="border p-4 rounded-lg border-violet-400">
-            <summary>DIRECCIÓN</summary>
-            <br>
-            <div class="flex flex-wrap gap-4">
-                <div v-if="checkField('pais_id')" class="grow">
-                    <span class="uppercase">pais</span>
-                    <select v-model="store.datos.pais_id" class="input focus:outline-none uppercase" :class="{'border-red-400':store.errors.hasOwnProperty('pais_id')}">
-                        <option v-for="pais in store.catalogos.paises" :value="pais.id">{{ pais.nombre }}</option>
-                    </select>
-                </div>
-                <div v-if="checkField('departamento_id')" class="grow">
-                    <span class="uppercase">departamento</span>
-                    <select v-model="store.datos.departamento_id" class="input focus:outline-none uppercase" :class="{'border-red-400':store.errors.hasOwnProperty('departamento_id')}">
-                        <option v-for="departamento in store.catalogos.departamentos" :value="departamento.id">{{ departamento.nombre }}</option>
-                    </select>
-                </div>
-                <div v-if="checkField('municipio_id')" class="grow">
-                    <span class="uppercase">municipio</span>
-                    <select v-model="store.datos.municipio_id" class="input focus:outline-none uppercase" :class="{'border-red-400':store.errors.hasOwnProperty('municipio_id')}">
-                        <option v-for="municipio in store.catalogos.municipios" :value="municipio.id">{{ municipio.nombre }}</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="grid xl:flex gap-4">
-                <div v-if="checkField('zona_id')" class="grow">
-                    <span class="uppercase">zona</span>
-                    <select v-model="store.datos.zona_id" class="input focus:outline-none uppercase" :class="{'border-red-400':store.errors.hasOwnProperty('zona_id')}">
-                        <option v-for="zona in store.catalogos.zonas" :value="zona.id">{{ zona.numero }}</option>
-                    </select>
-                </div>
-                <div v-if="checkField('grupo_habitacional_id')" class="grow">
-                    <span class="uppercase">grupo habitacional</span>
-                    <select v-model="store.datos.grupo_habitacional_id" class="input focus:outline-none uppercase" :class="{'border-red-400':store.errors.hasOwnProperty('grupo_habitacional_id')}">
-                        <option v-for="grupoHabitacional in store.catalogos.gruposHabitacionales" :value="grupoHabitacional.id">{{ grupoHabitacional.nombre }}</option>
-                    </select>
-                </div>
-                <div v-if="checkField('nombre_grupo_habitacional')" class="grow">
-                    <span class="uppercase">nombre grupo habitacional</span>
-                    <input v-model="store.datos.nombre_grupo_habitacional" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('nombre_grupo_habitacional')}" >
-                </div>
-            </div>
-
-            <div class="flex flex-wrap gap-4">
-                <div v-if="checkField('calle')" class="grow">
-                    <span class="uppercase">calle</span>
-                    <input v-model="store.datos.calle" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('calle')}" >
-                </div>
-                <div v-if="checkField('avenida')" class="grow">
-                    <span class="uppercase">avenida</span>
-                    <input v-model="store.datos.avenida" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('avenida')}" >
-                </div>
-                <div v-if="checkField('domicilio')" class="grow">
-                    <span class="uppercase">domicilio</span>
-                    <input v-model="store.datos.domicilio" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('domicilio')}" >
-                </div>
-            </div>
-        </details>
     </div>
-    {{ store.datos }}
 </template>

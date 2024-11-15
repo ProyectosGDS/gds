@@ -74,6 +74,7 @@ const parseDate = (value) => {
 }
 
 const filteredData = computed(() => {
+    
     currentPage.value = 1;
     const searchTerms = search.value.toLowerCase().trim().split(';').map(term => term.trim());
 

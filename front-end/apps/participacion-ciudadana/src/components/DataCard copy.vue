@@ -1,11 +1,16 @@
 <script setup>
 
+import { onClickOutside } from '@vueuse/core'
 import { ref, computed, onMounted } from 'vue'
+
+import { useGlobalStore } from '../stores/global'
+
+const global = useGlobalStore()
 
 // -------------PROPERTIES--------------
 
+
 const search = ref('')
-const categoria = ref('')
 const startIndex = ref(1)
 const endIndex = ref(1)
 const currentPage = ref(1)
@@ -13,16 +18,11 @@ const rowsPerPage = ref(12)
 const sortColumn = ref('programa.escuela.nombre')
 const sortDir = ref('desc')
 const sortType = ref(false)
+const openFilterOptions = ref(false)
+const target = ref(null)
 
 const props = defineProps({
-    data: {
-        type : Array,
-        default : () => []
-    },
-    categorias: {
-        type : Array,
-        default : () => []
-    },
+    data: null,
     loading: {
         type: Boolean,
         default: false
@@ -39,15 +39,8 @@ const data = computed(() => props.data)
 
 const filteredData = computed(() => {
     currentPage.value = 1;
-
-    if(!categoria.value == '') {
-        return sortedItems.value.filter(item => item.curso.categoria_id === categoria.value && item.curso.nombre.toLowerCase().match(search.value.toLowerCase()))
-    }
-
     return sortedItems.value.filter(item => item.curso.nombre.toLowerCase().match(search.value.toLowerCase()))
-
 }, { cache: true })
-
 
 const getObjectValue  = (object, key) => {
     const keys = key.split('.')
@@ -104,6 +97,28 @@ const displayedPages = computed(() => {
 
 // -------------METHODS--------------
 
+
+const sort = (column, type) => {
+
+    sortType.value = type
+
+    if (sortColumn.value === column) {
+        sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortColumn.value = column;
+        sortDir.value = 'asc';
+    }
+
+}
+
+const resetPage = () => {
+    currentPage.value = 1
+}
+
+
+
+onClickOutside(target, (event) => openFilterOptions.value = false)
+
 onMounted(() => {
 
     setTimeout(() => {
@@ -117,36 +132,24 @@ onMounted(() => {
 
 <template>
     <section class="px-7">
-        <!-- FILTERS -->
-        <div class="flex justify-between gap-5">
-            <select v-model="categoria" class="input uppercase">
-                <option v-for="categoria in props.categorias" :value="categoria.id">{{ categoria.nombre }}</option>
-                <option value="" selected>Todos los cursos</option>
-            </select>
-            <Input v-model="search" icon="fas fa-search" placeholder="Buscar curso .." />
+        <div class="md:flex md:justify-end">
+            <div class="border rounded-md flex items-center px-2 gap-2">
+                <Icon icon="fas fa-search" class="text-gray-500" />
+                <input type="search" class="h-10 w-full focus:outline-none" placeholder="Buscar curso ..." v-model="search">
+            </div>
         </div>
-        <!-- END FILTERS -->
-        <hr class="my-5">
+        <br>
         <!-- CARDS -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            <Card v-for="curso in paginatedData" class="overflow-hidden border" >
-                <template #header>
-                    <img src="/public/img/foto-card.jpg" :alt="curso.nombre" class=" object-cover h-48 w-auto object-center">
-                </template>
-                <div class="p-4">
-                    <span class=" text-wrap text-lg font-medium text-blue-muni">
-                        {{ `${curso.curso.nombre} ${curso.nivel.nombre}` }}
-                    </span>
-                    <p>
-                        {{ curso.curso.descripcion }}
-                    </p>
+         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div v-for="item in paginatedData" class="rounded-xl flex flex-col border border-lime-muni overflow-hidden">
+                <img src="/public/img/foto-card.jpg" :alt="item.curso.nombre" class=" object-cover h-48 object-center">
+                <div class="flex-1 p-3">
+                    <slot name="body" :item="item"></slot>    
                 </div>
-                <template #footer>
-                    <div class="p-4">
-                        <slot name="action" :item="curso"></slot>
-                    </div>
-                </template>
-            </Card>
+                <div class="p-3">
+                    <slot name="footer" :item="item"></slot>
+                </div>
+            </div>
         </div>
         <!-- END CARDS -->
         <br>

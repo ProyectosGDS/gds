@@ -44,6 +44,7 @@ const previus = () => {
 
 onMounted(() => {
     currentComponent.value = props.steps[0].name
+    props.steps.forEach(el => el.active = false)
     props.steps[0].active = true
 })
 

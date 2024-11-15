@@ -6,6 +6,8 @@ import { useRouter } from 'vue-router'
 export const useCursosStore = defineStore('cursos', () => {
 
     const router = useRouter()
+
+    const categorias = ref([])
     const cursos = ref([])
     const curso = ref({})
     const loading = ref(false)
@@ -42,20 +44,30 @@ export const useCursosStore = defineStore('cursos', () => {
         router.push({name:'Detalle del curso',params:{ curso_id : item.id }})
     }
 
-    async function fieldFormByDirection () {
-        axios.get('campos-registro')
-        .then(response => localStorage.setItem('campos-registro',JSON.stringify(response.data)))
+    function fetchCategorias () {
+        axios.get('categorias/index')
+        .then(response => categorias.value = response.data)
         .catch(error => console.error(error))
     }
 
+    async function fieldFormByDirection () {
+        axios.get('campos-registro')
+        .then(response => sessionStorage.setItem('campos-registro',JSON.stringify(response.data)))
+        .catch(error => console.error(error))
+    }
+
+    
+
     return {
         router,
+        categorias,
         cursos,
         curso,
         loading,
         errors,
 
         fetch,
+        fetchCategorias,
         detalleCurso,
         show,
         fieldFormByDirection,

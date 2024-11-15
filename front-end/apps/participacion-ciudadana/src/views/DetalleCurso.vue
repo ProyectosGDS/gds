@@ -1,12 +1,13 @@
 <script setup>
     import { useCursosStore } from '@/stores/cursos'
     import { useInscripcionStore } from '@/stores/inscripcion'
-    import { onMounted, ref, watchEffect } from 'vue'
+
+    import { onBeforeMount, ref, watchEffect } from 'vue'
     import Steps from '@/components/Steps.vue'
 
-    import DatosPersonales from './inscripcion/datos-personales/DatosPersonales.vue'
-    import Responsable from './inscripcion/responsable/Responsable.vue'
-    import Administrativo from './inscripcion/administrativo/Administrativo.vue'
+    import DatosPersonales from '@/views/inscripcion/datos-personales/DatosPersonales.vue'
+    import Responsable from '@/views/inscripcion/responsable/Responsable.vue'
+    import Otros from '@/views/inscripcion/otros/Otros.vue'
 
     const props = defineProps(['curso_id'])
 
@@ -22,14 +23,14 @@
         },
         { 
             index : 2, 
-            text : 'Responsable', 
-            name : 'Responsable', 
+            text : 'Datos academicos y medicos', 
+            name : 'Otros', 
             active : false 
         },
         { 
             index : 3, 
-            text : 'Administrativo', 
-            name : 'Administrativo', 
+            text : 'Responsable y emergencia', 
+            name : 'Responsable', 
             active : false 
         },
     ])
@@ -38,19 +39,31 @@
     const components = {
         DatosPersonales,
         Responsable,
-        Administrativo
+        Otros
     }
 
     watchEffect(() => store.show(props.curso_id))
 
-    onMounted(() => {
+    onBeforeMount(() => {
 
-        if(!localStorage.getItem('catalogos')) {
+        if(!sessionStorage.getItem('catalogos')) {
             inscripcion.fetchCatalogos()
         }
 
-        if(!localStorage.getItem('campos-registro')) {
+        if(!sessionStorage.getItem('campos-registro')) {
             store.fieldFormByDirection()
+        }
+
+
+        const storedCatalogos = sessionStorage.getItem('catalogos')
+        const storedCamposRegistro = sessionStorage.getItem('campos-registro')
+
+        if (storedCatalogos) {
+            inscripcion.catalogos = JSON.parse(storedCatalogos)
+        }
+
+        if (storedCamposRegistro) {
+            inscripcion.camposRegistro = JSON.parse(storedCamposRegistro)
         }
     })
     
@@ -128,16 +141,15 @@
                     </p>
                 </div>
                 <div class="flex justify-center items-center">
-                    <Button @click="inscripcion.openModal.form = true" icon="fas fa-thumbs-up" text="Inscribete" class="bg-blue-muni btn text-white rounded-full h-16 w-40 text-3xl self-center mx-auto" />
+                    <Button @click="inscripcion.modal(store.curso)" icon="fas fa-thumbs-up" text="Inscribete" class="bg-blue-muni btn text-white rounded-full h-16 w-40 text-3xl self-center mx-auto" />
                 </div>
             </div>
         </div>
     </div>
-    <Modal :open="inscripcion.openModal.form" title="Formulario de inscripción" icon="fas fa-clipboard-list" class="w-2/3">
+    <Modal :open="inscripcion.openModal.form" :title="'Formulario de inscripción - ' + store.curso?.curso?.nombre" icon="fas fa-clipboard-list" class="w-2/3">
         <div>
-            <form >
-                <Steps :steps="steps" :components="components" />
-            </form>
+            <Steps :steps="steps" :components="components" />
+            <Validate-Errors v-if="inscripcion.errors != 0" :errors="inscripcion.errors" />
         </div>
         <template #footer>
             <Button @click="inscripcion.resetData()" text="Cancelar" icon="fas fa-xmark" class="btn-dark rounded-full" />
