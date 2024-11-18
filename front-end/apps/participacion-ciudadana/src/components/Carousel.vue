@@ -44,4 +44,4 @@
             <icon icon="fas fa-angle-right" />
         </button>
       </div>
-</template>
+</template> 
