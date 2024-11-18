@@ -13,4 +13,12 @@ class EscIncripciones extends Model
         'persona_id',
         'usuario_id',
     ];
+
+    public function persona() {
+        return $this->belongsTo(PerPersonas::class);
+    }
+
+    public function portafolio() {
+        return $this->belongsTo(EscPortafolio::class);
+    }
 }

@@ -8,7 +8,6 @@ class PerPersonas extends Model
 {
     protected $connection = 'gds';    
     protected $table = 'PER_PERSONAS';
-    public $timestamps = false;
     protected $fillable = [
         'primer_nombre',
         'segundo_nombre',
@@ -23,17 +22,24 @@ class PerPersonas extends Model
         'no_interlocutor',
         'nit',
         'pasaporte',
-        'direccion_domiciliar_id',
         'grupo_etnico_id',
+        'status_id',
+        'di_direccion_id'
     ];
+
+    protected $appends = ["fullname"];
 
     // RELACIONES INVERSAS
     public function direccionDomiciliar() {
-        return $this->belongsTo(DireccionesDomiciliares::class,'direccion_domiciliar_id','id');
+        return $this->hasOne(PerDireccionesDomiciliares::class,'persona_id','id');
     }
 
     public function grupoEtnico() {
         return $this->belongsTo(GruposEtnicos::class,'grupo_etnico_id','id');
+    }
+
+    public function status() {
+        return $this->belongsTo(EscStatus::class);
     }
 
     // RELACIONES
@@ -52,6 +58,11 @@ class PerPersonas extends Model
 
     public function responsables() {
         return $this->hasMany(PerResponsables::class,'persona_id','id');
+    }
+
+    public function getFullNameAttribute()
+    {
+      return $this->primer_nombre .' ' . $this->segundo_nombre .' ' . $this->primer_apellido .' ' . $this->segundo_apellido;
     }
 
 

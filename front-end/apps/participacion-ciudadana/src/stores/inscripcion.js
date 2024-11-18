@@ -64,13 +64,19 @@ export const useInscripcionStore = defineStore('inscripcion', () => {
     }
 
     function fetchCatalogos () {
-        axios.get('catalogos')
-        .then(response => sessionStorage.setItem('catalogos',JSON.stringify(response.data)))
-        .catch(error => console.error(error))
+        
+        if(!catalogos.value.hasOwnProperty('paises')) {
+            axios.get('catalogos')
+            .then(response => {
+                catalogos.value = response.data
+            })
+            .catch(error => console.error(error))
+        }
+
     }
 
     function changePais () {
-        if(datos.value.hasOwnProperty('pais_id')) {
+        if(datos.value.hasOwnProperty('pais_id') && !catalogos.value.hasOwnProperty('departamentos')) {
             axios.get(`paises/${datos.value.pais_id}`)
             .then(response => catalogos.value.departamentos = response.data.departamentos)
             .catch(error => console.error(error.response.data))
@@ -78,7 +84,7 @@ export const useInscripcionStore = defineStore('inscripcion', () => {
     }
 
     function changeDepartamento () {
-        if(datos.value.hasOwnProperty('departamento_id')) {
+        if(datos.value.hasOwnProperty('departamento_id') && !catalogos.value.hasOwnProperty('municipios')) {
             axios.get(`departamentos/${datos.value.departamento_id}`)
             .then(response => catalogos.value.municipios = response.data.municipios)
             .catch(error => console.error(error.response.data))

@@ -27,6 +27,25 @@ class PortafolioController extends Controller
         }
     }
 
+    public function show(int $id) {
+        try {
+            $portafolio = EscPortafolio::with([
+                    'programa.escuela',
+                    'nivel:id,nombre',
+                    'seccion:id,nombre',
+                    'curso',
+                    'instructor:id,nombre',
+                    'horario:id,dia,hora_inicial,hora_final',
+                    'sede.zona'
+                ])->where('id',$id)->first();
+
+            return response($portafolio);
+            
+        } catch (\Throwable $th) {
+            return response($th->getMessage());
+        }
+    }
+
     public function store(Request $request) {
 
         $request->validate([

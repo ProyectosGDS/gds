@@ -50,7 +50,6 @@
                 <br>
                 <Button type="submit" text="Guardar" icon="fas fa-save" class="btn-primary rounded-full" />
             </form>
-            {{ store.empleado }}
         </Card>
     </main>
 </template>

@@ -10,7 +10,7 @@ class PerDatosAcademicos extends Model
     protected $table = 'PER_DATOS_ACADEMICOS';
     public $timestamps = false;
     protected $fillable = [
-        'establecimiento',
+        'establecimiento_educativo',
         'grado',
         'titulo',
         'escolaridad_id',

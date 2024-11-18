@@ -11,7 +11,9 @@ export const useRegisterStore = defineStore('register', () => {
     const etnias = ref([])
     const direcciones = ref([])
 
-    const empleado = ref({})
+    const empleado = ref({
+        sexo : 'h'
+    })
     const loading = ref(false)
     const errors = ref([])
 

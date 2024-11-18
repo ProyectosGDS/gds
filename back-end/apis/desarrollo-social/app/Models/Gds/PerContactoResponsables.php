@@ -4,24 +4,28 @@ namespace App\Models\Gds;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PerResponsables extends Model
+class PerContactoResponsables extends Model
 {
     protected $connection = 'gds';    
-    protected $table = 'PER_RESPONSABLES';
+    protected $table = 'PER_CONTACTO_RESPONSABLES';
     public $timestamps = false;
     protected $fillable = [
+
         'persona_id',
         'parentesco_id',
-        'responsable_id',
+        'cui',
+        'nombre',
+        'zona_id',
+        'direccion_domiciliar',
+        'celular',
+        'correo',
+        'sexo',
+
     ];
 
     // RELACIONES INVERSAS
     public function parentesco() {
         return $this->belongsTo(Parentescos::class,'parentesco_id','id');
-    }
-
-    public function responsable() {
-        return $this->belongsTo(PerPersonas::class,'responsable_id','id');
     }
 
     public function persona() {

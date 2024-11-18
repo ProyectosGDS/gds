@@ -116,9 +116,9 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="px-7">
+    <section class="lg:px-7">
         <!-- FILTERS -->
-        <div class="flex justify-between gap-5">
+        <div class="lg:flex justify-between gap-5">
             <select v-model="categoria" class="input uppercase">
                 <option v-for="categoria in props.categorias" :value="categoria.id">{{ categoria.nombre }}</option>
                 <option value="" selected>Todos los cursos</option>
@@ -128,16 +128,16 @@ onMounted(() => {
         <!-- END FILTERS -->
         <hr class="my-5">
         <!-- CARDS -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            <Card v-for="curso in paginatedData" class="overflow-hidden border" >
+        <div class="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-4">
+            <Card v-for="curso in paginatedData" class="overflow-hidden border">
                 <template #header>
-                    <img src="/public/img/foto-card.jpg" :alt="curso.nombre" class=" object-cover h-48 w-auto object-center">
+                    <img src="/public/img/foto-card.jpg" :alt="curso.nombre" class=" object-cover h-32 w-auto object-center">
                 </template>
                 <div class="p-4">
                     <span class=" text-wrap text-lg font-medium text-blue-muni">
                         {{ `${curso.curso.nombre} ${curso.nivel.nombre}` }}
                     </span>
-                    <p>
+                    <p class="">
                         {{ curso.curso.descripcion }}
                     </p>
                 </div>

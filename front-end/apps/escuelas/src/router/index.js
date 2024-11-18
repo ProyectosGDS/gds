@@ -136,8 +136,26 @@ router.beforeEach((to, from) => {
 
 	const auth = useAuthStore()
 
-	
-	
+	if(to.path === '/'){
+		if(localStorage.getItem('direccion_id')){
+			if (localStorage.getItem('escuelas') === 'true') {
+				return { name : 'Escuelas'}
+			} else {
+				return { name : 'Edit'}
+			}
+		} else {
+			return  { name : 'Login' }
+		}
+	}
+
+	if(to.name == 'Escuelas'){
+		if (localStorage.getItem('escuelas') === 'true') {
+			return true
+		} else {
+			return { name : 'Edit'}
+		}
+	}
+
 	if (to.meta.auth) {
 
 		const hasPermission = auth.permisos.includes(to.name);
@@ -147,26 +165,6 @@ router.beforeEach((to, from) => {
 			return { name : 'Login'};
 		}
 	}
-
-	// if(to.path === '/'){
-	// 	if(localStorage.getItem('direccion_id')){
-	// 		if (localStorage.getItem('escuelas') === 'true') {
-	// 			return { name : 'Escuelas'}
-	// 		} else {
-	// 			return { name : 'Edit'}
-	// 		}
-	// 	} else {
-	// 		return  { name : 'Login' }
-	// 	}
-	// }
-
-	// if(to.name == 'Escuelas'){
-	// 	if (localStorage.getItem('escuelas') === 'true') {
-	// 		return true
-	// 	} else {
-	// 		return { name : 'Edit'}
-	// 	}
-	// }
 
 	return true
   

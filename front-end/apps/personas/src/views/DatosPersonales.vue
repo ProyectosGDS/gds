@@ -1,17 +1,27 @@
 <script setup>
     import { useDatosPersonalesStore } from '../stores/datos-personales'
     import { useCatalogosStore } from '../stores/catalogos'
-    import { onMounted, watchEffect } from 'vue'
+    import { onBeforeMount, ref, watchEffect } from 'vue'
+    import axios from 'axios';
+
+    const campos = ref([])
 
     const store = useDatosPersonalesStore()
     const catalogos = useCatalogosStore()
+
+    function fetchCamposRegistro () {
+        axios.get('campos-registro')
+        .then(response => campos.value = response.data)
+        .catch(error => console.error(error.response.data))
+    }
 
     watchEffect(() => {
         store.changePais()
         store.changeDepartamento()
     })
 
-    onMounted(() => {
+    onBeforeMount(() => {
+        fetchCamposRegistro()
         catalogos.fetchEnfermedades()
         catalogos.fetchEscolaridades()
         catalogos.fetchEtnias()
@@ -24,6 +34,7 @@
 </script>
 
 <template>
+
     <Card class="bg-white p-8">
         <template #header>
             <h1 class="text-xl text-violet-400">Datos generales</h1>
@@ -31,7 +42,7 @@
         <br>
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
 
-            <Input @keypress="store.verifyCui" option="label" title="cui / dpi" v-model="store.data.cui" :error="store.errors.hasOwnProperty('cui')" maxlength="13" minlength="13" autocomplete="off" />
+            <Input @keydown="store.verifyCui" option="label" title="cui / dpi" v-model="store.data.cui" :error="store.errors.hasOwnProperty('cui')" maxlength="13" minlength="13" autocomplete="off" />
             <Input option="label" title="nit" v-model="store.data.nit" :error="store.errors.hasOwnProperty('nit')" maxlength="13" minlength="13" autocomplete="off" />
             <Input option="label" title="pasaporte" v-model="store.data.pasaporte" :error="store.errors.hasOwnProperty('pasaporte')"autocomplete="off" />
             

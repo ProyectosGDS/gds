@@ -2,8 +2,11 @@ import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useInscripcionStore } from './inscripcion'
 
 export const useCursosStore = defineStore('cursos', () => {
+
+    const inscripcion = useInscripcionStore()
 
     const router = useRouter()
 
@@ -50,10 +53,11 @@ export const useCursosStore = defineStore('cursos', () => {
         .catch(error => console.error(error))
     }
 
-    async function fieldFormByDirection () {
+    function fieldFormByDirection () {
         axios.get('campos-registro')
-        .then(response => sessionStorage.setItem('campos-registro',JSON.stringify(response.data)))
+        .then(response => inscripcion.camposRegistro = response.data)
         .catch(error => console.error(error))
+        
     }
 
     

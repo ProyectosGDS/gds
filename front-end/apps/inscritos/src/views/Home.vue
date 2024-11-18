@@ -8,7 +8,7 @@
 
 <template>
     <Card class="bg-white p-8">
-        <h1>Inscritos</h1>
+        <h1 class="text-xl text-gray-500 uppercase">Inscritos</h1>
         <Data-Table :headers="store.headers" :data="store.inscritos" :loading="store.loading" :export="false" />
     </Card>
 </template>

@@ -10,8 +10,9 @@
     })
 
     async function checkField(fieldname) {
-        const direcciones = await store.camposRegistro.find(item => item.campo === fieldname ).di_direcciones
-        return direcciones.includes(store.datos.di_direccion_id)
+        const ids_direcciones = store.camposRegistro.filter(item => item.categoria =='direccion domiciliar')
+        const result = ids_direcciones.find(item => item.campo == fieldname)
+        return result.di_direcciones.includes(store.datos.di_direccion_id)
     }
 
 
@@ -20,7 +21,7 @@
 
 <template>
     <details :open="true" class="border p-4 rounded-lg border-violet-400">
-        <summary>DIRECCIÓN Y CONTACTO </summary>
+        <summary>DIRECCIÓN DOMICILIAR </summary>
         <br>
         <div class="flex flex-wrap gap-4">
             <div v-if="checkField('pais_id')" class="grow">
@@ -74,35 +75,6 @@
             <div v-if="checkField('domicilio')" class="grow">
                 <span class="uppercase">domicilio</span>
                 <input v-model="store.datos.domicilio" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('domicilio')}" >
-            </div>
-        </div>
-        <hr class="my-4">
-        <div class="grid xl:flex gap-4">
-            <div v-if="checkField('celular')" class="grow">
-                <span class="uppercase">Celular</span>
-                <input v-model="store.datos.celular" type="number" maxlength="8" minlength="8" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('celular')}" >
-            </div>
-            <div v-if="checkField('correo')" class="grow">
-                <span class="uppercase">correo electrónico</span>
-                <input v-model="store.datos.correo" type="email" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('correo')}" >
-            </div>
-            <div v-if="checkField('telefono')" class="grow">
-                <span class="uppercase">teléfono</span>
-                <input v-model="store.datos.telefono" type="number" maxlength="8" minlength="8" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('telefono')}" >
-            </div>
-        </div>
-        <div class="grid xl:flex gap-4">
-            <div v-if="checkField('facebook')" class="grow">
-                <span class="uppercase">facebook</span>
-                <input v-model="store.datos.facebook" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('facebook')}" >
-            </div>
-            <div v-if="checkField('tiktok')" class="grow">
-                <span class="uppercase">tiktok</span>
-                <input v-model="store.datos.tiktok" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('tiktok')}" >
-            </div>
-            <div v-if="checkField('instagram')" class="grow">
-                <span class="uppercase">instagram</span>
-                <input v-model="store.datos.instagram" type="text" class="input focus:outline-none" :class="{'border-red-400':store.errors.hasOwnProperty('instagram')}" >
             </div>
         </div>
     </details>

@@ -42,29 +42,16 @@
         Otros
     }
 
-    watchEffect(() => store.show(props.curso_id))
+
+    watchEffect(() => {
+        store.show(props.curso_id)
+    })
 
     onBeforeMount(() => {
 
-        if(!sessionStorage.getItem('catalogos')) {
-            inscripcion.fetchCatalogos()
-        }
-
-        if(!sessionStorage.getItem('campos-registro')) {
-            store.fieldFormByDirection()
-        }
-
-
-        const storedCatalogos = sessionStorage.getItem('catalogos')
-        const storedCamposRegistro = sessionStorage.getItem('campos-registro')
-
-        if (storedCatalogos) {
-            inscripcion.catalogos = JSON.parse(storedCatalogos)
-        }
-
-        if (storedCamposRegistro) {
-            inscripcion.camposRegistro = JSON.parse(storedCamposRegistro)
-        }
+        inscripcion.fetchCatalogos()
+        store.fieldFormByDirection()
+        
     })
     
 </script>

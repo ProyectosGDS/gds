@@ -3,9 +3,10 @@
     
     const store = useInscripcionStore()
 
-    async function checkField(fieldname) {
-        const direcciones = await store.camposRegistro.find(item => item.campo === fieldname ).di_direcciones
-       return direcciones.includes(store.datos.di_direccion_id)
+    function checkField(fieldname) {
+        const ids_direcciones = store.camposRegistro.filter(item => item.categoria =='datos personales')
+        const result = ids_direcciones.find(item => item.campo == fieldname)
+        return result.di_direcciones.includes(store.datos.di_direccion_id)
     }
 
     function verifyCui() {
@@ -63,7 +64,6 @@
 </script>
 
 <template>
-    
     <div>
         <div>
             <span class="uppercase">Busqueda por cui</span>

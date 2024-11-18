@@ -58,7 +58,8 @@
         modalidad : '',
         direccion : '',
         zona_id: '',
-        di_direccion_id : localStorage.getItem('direccion_id')
+        di_direccion_id : localStorage.getItem('direccion_id'),
+        cupo : ''
     })
 
     const loading = ref(false)
@@ -138,7 +139,8 @@
             hora_final : '',
             dia:'',
             modalidad : '',
-            sede_id : ''
+            sede_id : '',
+            cupo : '',
         }
 
         openModal.value = false
@@ -311,11 +313,12 @@
             <SelectSearch v-if="type.url == 'sedes'" :items="zonas" v-model="resource.zona_id" :fields="['id','numero']" title="SELECCIONE ZONA" format="'Zona '+ item.numero" :error="errors.hasOwnProperty('zona_id')" />
             <Input v-if="type.url == 'sedes'" option="label" title="direccion" v-model="resource.direccion" :error="errors.hasOwnProperty('direccion')" autocomplete="off" />
             <Input option="label" title="nombre" v-model="resource.nombre" :error="errors.hasOwnProperty('nombre')" autocomplete="off" />
-            <Input v-if="type.url != 'sedes'" option="text-area" title="descripcion" rows="4" v-model="resource.descripcion" autocomplete="off" />
+            <Input v-if="type.url == 'cursos'" option="label" title="cupo" type="number" v-model="resource.cupo" :error="errors.hasOwnProperty('cupo')" autocomplete="off" />
+            <Input v-if="['programas','cursos'].includes(type.url)" option="text-area" title="descripcion" rows="4" v-model="resource.descripcion" autocomplete="off" />
+            
             
         </div>
-        <div v-else>
-            
+        <div v-else>   
             <Input option="select" title="Día" v-model="resource.dia" :error="errors.hasOwnProperty('dia')">
                 <option value=""></option>
                 <option value="Lunes">Lunes</option>

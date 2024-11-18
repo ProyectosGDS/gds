@@ -21,7 +21,9 @@ class EscCursos extends Model
         return $this->belongsToMany(EscInstructores::class,'esc_portafolio','curso_id','instructor_id')->withPivot('programa_id','nivel_id','seccion_id');
     }
 
-
+    public function categoria() {
+        return $this->belongsTo(EscCategoriaCursos::class,'categoria_id','id');
+    }
 
     
 }

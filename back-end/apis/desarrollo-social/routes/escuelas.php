@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Escuelas\CategoriasCursosController;
 use App\Http\Controllers\Escuelas\CursosController;
 use App\Http\Controllers\Escuelas\EscuelasController;
 use App\Http\Controllers\Escuelas\HorariosController;
+use App\Http\Controllers\Escuelas\InscripcionesController;
 use App\Http\Controllers\Escuelas\InstructoresController;
 use App\Http\Controllers\Escuelas\NivelesController;
 use App\Http\Controllers\Escuelas\PortafolioController;
@@ -81,16 +83,25 @@ Route::prefix('instructores')->group(function(){
 
 Route::prefix('portafolio')->group(function(){
     Route::get('index',[PortafolioController::class,'index']);
+    Route::get('show/{id}',[PortafolioController::class,'show']);
     Route::post('store',[PortafolioController::class,'store']);
     Route::put('update',[PortafolioController::class,'update']);
-    Route::post('destroy',[PortafolioController::class,'destroy']);
+    Route::delete('destroy',[PortafolioController::class,'destroy']);
 });
 
 Route::prefix('sedes')->group(function(){
     Route::get('index',[SedesController::class,'index']);
     Route::post('store',[SedesController::class,'store']);
-    Route::put('update',[SedesController::class,'update']);
-    Route::post('destroy',[SedesController::class,'destroy']);
+    Route::put('update/{sede}',[SedesController::class,'update']);
+    Route::delete('destroy/{sede}',[SedesController::class,'destroy']);
+});
+
+Route::prefix('inscripciones')->group(function(){
+    Route::get('index',[InscripcionesController::class,'index']);
+});
+
+Route::prefix('categorias')->group(function(){
+    Route::get('index',[CategoriasCursosController::class,'index']);
 });
 
 

@@ -63,7 +63,7 @@ class SedesController extends Controller
 
         try {
             
-            $sede->nombre = ucwords(strtolower($request->nombre));
+            $sede->nombre = strtoupper(trim($request->nombre));
             $sede->deleted_at = is_null($request->deleted_at) ? null : $request->deleted_at;
             $sede->direccion = $request->direccion;
             $sede->zona_id = $request->zona_id;

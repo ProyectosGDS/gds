@@ -107,20 +107,18 @@
         <NavBar :index="0" />
         <div class="h-screen flex flex-col">
             <section class="flex-1 container mx-auto py-8">
-                <div class="xl:flex gap-4 px-2">
-                    <Card class="bg-white p-4 flex-1">
+                <div class="lg:flex gap-5">
+                    <Card class="bg-white p-4">
                         <RouterView />
                     </Card>
-                    <br>
                     <Card class="bg-white p-4">
                         <h1 class="text-xl font-semibold text-gray-500">Proximas actividades</h1>
                         <br>
                         <div class="grid gap-3 w-full">
                             
-                            <Carousel :images="images" class="w-72 h-32" />
+                            <Carousel :images="images" />
                             
                             <div>
-                                <!-- <Date-Picker v-model="date"  inline auto-apply/> -->
                                 <Calendar :events="events" :min="true" />
                             </div>
                             <div>

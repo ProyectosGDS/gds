@@ -4,10 +4,10 @@
 
     const store = useInscripcionStore()
 
-    async function checkField(fieldname) {
-        
-        const direcciones = await store.camposRegistro.find(item => item.categoria == 'datos responsable' && item.campo === fieldname)?.di_direcciones
-        return direcciones.includes(store.datos.di_direccion_id)
+    function checkField(fieldname) {
+        const ids_direcciones = store.camposRegistro.filter(item => item.categoria =='contacto emergencia')
+        const result = ids_direcciones.find(item => item.campo == fieldname)
+        return result.di_direcciones.includes(store.datos.di_direccion_id)
     }
 
     

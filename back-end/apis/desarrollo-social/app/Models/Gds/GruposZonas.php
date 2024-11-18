@@ -27,6 +27,6 @@ class GruposZonas extends Model
     // RELACIONES
 
     public function direccionDomiciliar() {
-        return $this->hasMany(DireccionesDomiciliares::class,'grupos_zonas_id','id');
+        return $this->hasMany(PerDireccionesDomiciliares::class,'grupos_zonas_id','id');
     }
 }
