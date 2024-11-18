@@ -14,7 +14,7 @@ use App\Http\Controllers\Escuelas\SeccionesController;
 use App\Http\Controllers\Escuelas\SedesController;
 use Illuminate\Support\Facades\Route;
 
-
+/* Estas son las rutas de las escuelas */
 
 Route::prefix('escuelas')->group(function(){
     Route::get('index',[EscuelasController::class,'index']);
