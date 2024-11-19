@@ -108,7 +108,7 @@
         <div class="h-screen flex flex-col">
             <section class="flex-1 container mx-auto py-8">
                 <div class="lg:flex gap-5">
-                    <Card class="bg-white p-4">
+                    <Card class="bg-white p-4 w-full">
                         <RouterView />
                     </Card>
                     <Card class="bg-white p-4">

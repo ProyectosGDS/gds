@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useInscripcionStore } from './inscripcion'
 
@@ -16,6 +16,8 @@ export const useCursosStore = defineStore('cursos', () => {
     const loading = ref(false)
     const errors = ref([])
 
+
+    
     async function fetch () {
         try {
             loading.value = true
@@ -60,7 +62,6 @@ export const useCursosStore = defineStore('cursos', () => {
         
     }
 
-    
 
     return {
         router,

@@ -10,7 +10,7 @@
             <img src="/public/img/logo.png" alt="Municipalidad de Guatemala" class="h-16">
             <div class="flex-1 flex justify-center items-center gap-x-4 md:gap-x-10">
                 <template v-for="route in routes.matched[props.index].children">
-                    <RouterLink :to="{name : route.name}" active-class="border-b-2 border-lime-muni font-medium" >
+                    <RouterLink :to="{name : route.name}" active-class="border-b-2 border-lime-muni font-medium" class="focus:outline-none select-none" >
                         {{ route.name }} 
                     </RouterLink>
                 </template>

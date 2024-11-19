@@ -2,7 +2,7 @@
     import { useCursosStore } from '@/stores/cursos'
     import { useInscripcionStore } from '@/stores/inscripcion'
 
-    import { onBeforeMount, ref, watchEffect } from 'vue'
+    import { computed, onBeforeMount, ref, watchEffect } from 'vue'
     import Steps from '@/components/Steps.vue'
 
     import DatosPersonales from '@/views/inscripcion/datos-personales/DatosPersonales.vue'
@@ -35,12 +35,15 @@
         },
     ])
 
-
     const components = {
         DatosPersonales,
         Responsable,
         Otros
     }
+
+    const cupo = computed(() => {
+        return (store.curso.curso.cupo - store.curso.inscritos.length);
+    })
 
 
     watchEffect(() => {
@@ -65,8 +68,10 @@
             </div>
         </div>
         <br>
-        <header class="background-img w-full flex items-center justify-center h-48 bg-center bg-cover rounded-lg overflow-hidden">
-            <h1 class="text-white text-3xl lg:text-7xl uppercase text-center">
+        <header class="w-full flex items-center justify-center h-48 bg-center bg-cover rounded-lg overflow-hidden "
+                :style="{ backgroundImage: `url(data:image/jpeg;base64,${store.curso.curso.imageEncode})` }"
+        >
+            <h1 class="text-white text-3xl lg:text-7xl uppercase text-center drop-shadow-xl">
                 {{ store.curso?.curso.nombre + ' ' + store.curso.nivel?.nombre }}
             </h1>
         </header>
@@ -86,7 +91,7 @@
                         <li class="flex gap-3 items-center">
                             <Icon icon="fas fa-users"/>
                             <span class="font-medium">Cupo disponible :</span>
-                            <span>{{ store.curso?.curso?.cupo }}</span>
+                            <span>{{ cupo }}</span>
                         </li>
                         <li class="flex gap-3 items-center">
                             <Icon icon="fas fa-chalkboard-user"/>
@@ -110,10 +115,10 @@
                     <h1 class="text-3xl text-blue-muni">Requisitos</h1>
                     <br>
                     <ul>
-                        <li v-for="i in 8">
+                        <li v-for="requisito in store.curso.curso.requisitos">
                             <label class="flex items-center gap-4">
                                 <Icon icon="fas fa-check" />
-                                <span>Lorem ipsum dolor sit amet</span>
+                                <span>{{ requisito.descripcion }}</span>
                             </label>
                         </li>
                     </ul>
@@ -143,9 +148,3 @@
         </template>
     </Modal>
 </template>
-
-<style scoped>
-    .background-img {
-        background-image: url('/public/img/foto-card.jpg');
-    }
-</style>
