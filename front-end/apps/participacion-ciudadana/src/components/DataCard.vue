@@ -118,7 +118,7 @@ onMounted(() => {
 <template>
     <section class="lg:px-7">
         <!-- FILTERS -->
-        <div class="lg:flex justify-between gap-5">
+        <div class=" space-y-2 lg:space-y-0 lg:flex justify-between gap-5">
             <select v-model="categoria" class="input uppercase">
                 <option v-for="categoria in props.categorias" :value="categoria.id">{{ categoria.nombre }}</option>
                 <option value="" selected>Todos los cursos</option>
@@ -135,9 +135,6 @@ onMounted(() => {
                     <img :src="curso.curso.imagen ? curso?.curso?.urlImage : '/public/img/foto-card.jpg'" 
                          :alt="curso.nombre" 
                          class=" object-cover h-40 w-auto object-center">
-                    <!-- <img :src="curso.curso.imagen ? 'data:image/jpg;base64, ' + curso?.curso?.imageEncode : '/public/img/foto-card.jpg'" 
-                         :alt="curso.nombre" 
-                         class=" object-cover h-40 w-auto object-center"> -->
                 </template>
                 <div class="p-4">
                     <span class=" text-wrap text-lg font-medium text-blue-muni">
