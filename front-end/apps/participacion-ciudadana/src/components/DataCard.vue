@@ -132,9 +132,12 @@ onMounted(() => {
         <div class="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-4">
             <Card v-for="curso in paginatedData" class="overflow-hidden border border-blue-muni">
                 <template #header>
-                    <img :src="curso.curso.imagen ? 'data:image/jpg;base64, ' + curso?.curso?.imageEncode : '/public/img/foto-card.jpg'" 
+                    <img :src="curso.curso.imagen ? curso?.curso?.urlImage : '/public/img/foto-card.jpg'" 
                          :alt="curso.nombre" 
                          class=" object-cover h-40 w-auto object-center">
+                    <!-- <img :src="curso.curso.imagen ? 'data:image/jpg;base64, ' + curso?.curso?.imageEncode : '/public/img/foto-card.jpg'" 
+                         :alt="curso.nombre" 
+                         class=" object-cover h-40 w-auto object-center"> -->
                 </template>
                 <div class="p-4">
                     <span class=" text-wrap text-lg font-medium text-blue-muni">

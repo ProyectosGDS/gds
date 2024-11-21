@@ -11,7 +11,7 @@ class EscCursos extends Model
     protected $table = 'ESC_CURSOS';
     public $timestamps = false;
     public $appends = [
-        'imageEncode'
+        'urlImage'
     ];
 
     protected $fillable = [
@@ -39,9 +39,9 @@ class EscCursos extends Model
         return $this->belongsToMany(EscRequisitos::class,'esc_cursos_requisitos','curso_id','requisito_id');
     }
 
-    public function getImageEncodeAttribute() {
-        $image = Storage::get('public/escuelas/cursos/'.$this->imagen);
-        return base64_encode($image);
+    public function getUrlImageAttribute() {
+        $url = Storage::url('participacion-ciudadana/cursos/'.$this->imagen);
+        return $url;
     }
 
     

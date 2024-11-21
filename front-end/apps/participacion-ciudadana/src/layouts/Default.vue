@@ -1,10 +1,13 @@
 <script setup>
+    import { ref } from 'vue';
     import BackTop from '../components/BackTop.vue'
     import NavBar from '../components/NavBar.vue'
     import Footer from '../components/Footer.vue'
     import Calendar from '@/components/Calendar.vue'
     import Carousel from '../components/Carousel.vue'
-    import { ref } from 'vue';
+
+
+    
 
     const date = ref(new Date());
 
@@ -95,10 +98,6 @@
             },
     ]
 
-    const images = [
-        '/public/img/carousel/1.png',
-        '/public/img/carousel/2.jpg',
-    ]
     
 </script>
 
@@ -116,7 +115,7 @@
                         <br>
                         <div class="grid gap-3 w-full">
                             
-                            <Carousel :images="images" />
+                            <Carousel />
                             
                             <div>
                                 <Calendar :events="events" :min="true" />

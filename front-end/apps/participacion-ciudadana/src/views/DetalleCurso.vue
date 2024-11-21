@@ -68,9 +68,10 @@
             </div>
         </div>
         <br>
-        <header class="w-full flex items-center justify-center h-48 bg-center bg-cover rounded-lg overflow-hidden "
-                :style="{ backgroundImage: `url(data:image/jpeg;base64,${store.curso.curso.imageEncode})` }"
-        >
+        <header class="w-full flex items-center justify-center h-48 rounded-lg overflow-hidden relative">
+                <img :src="store.curso.curso.imagen ? store.curso.curso.urlImage : '/public/img/foto-card.jpg'" 
+                         :alt="store.curso.curso.nombre" 
+                         class=" object-cover object-center absolute blur-sm">
             <h1 class="text-white text-3xl lg:text-7xl uppercase text-center drop-shadow-xl">
                 {{ store.curso?.curso.nombre + ' ' + store.curso.nivel?.nombre }}
             </h1>
