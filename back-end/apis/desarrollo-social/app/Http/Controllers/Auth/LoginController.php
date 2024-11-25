@@ -51,7 +51,7 @@ class LoginController extends Controller
 
                     if($accessToken) {
 
-                        $cookie = cookie('access_token', $accessToken, config('jwt.expired_token'), '/', null, null, true);
+                        $cookie = cookie('access_token', $accessToken, config('jwt.expired_token'), '/', null, null, false);
         
                         return response(base64_encode(
                             $this->permisosApp(
