@@ -12,6 +12,7 @@
 </script>
 
 <template>
+    
     <DataCard :data="store.cursos" :categorias="store.categorias" :loading="store.loading">
         <template #action="{item}">
             <Button @click="store.detalleCurso(item)" icon="fas fa-arrow-right" text="Saber mas ..." class="bg-blue-muni text-white rounded-full" />

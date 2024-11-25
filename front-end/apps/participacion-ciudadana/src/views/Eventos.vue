@@ -92,5 +92,6 @@
 <template>
     <h1 class="text-2xl text-gray-500 font-semibold">Eventos</h1>
     <br>
-    <Calendar :events="events" />
+    <!-- <Loading-Bar class="bg-blue-muni h-1" /> -->
+    <Calendar :events="events" class="w-full"/>
 </template>

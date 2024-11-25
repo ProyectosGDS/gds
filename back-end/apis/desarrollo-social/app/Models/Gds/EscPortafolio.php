@@ -43,4 +43,7 @@ class EscPortafolio extends Model
     public function sede() {
         return $this->belongsTo(EscSedes::class,'sede_id','id');
     }
+    public function inscritos() {
+        return $this->hasMany(EscIncripciones::class,'portafolio_id','id');
+    }
 }

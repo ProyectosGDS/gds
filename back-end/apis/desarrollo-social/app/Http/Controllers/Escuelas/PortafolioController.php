@@ -18,7 +18,7 @@ class PortafolioController extends Controller
                                 'curso',
                                 'instructor:id,nombre',
                                 'horario:id,dia,hora_inicial,hora_final',
-                                'sede.zona'
+                                'sede.zona',
                             ])->get();
             return response($portafolios);
 
@@ -33,10 +33,11 @@ class PortafolioController extends Controller
                     'programa.escuela',
                     'nivel:id,nombre',
                     'seccion:id,nombre',
-                    'curso',
+                    'curso.requisitos',
                     'instructor:id,nombre',
                     'horario:id,dia,hora_inicial,hora_final',
-                    'sede.zona'
+                    'sede.zona',
+                    'inscritos',
                 ])->where('id',$id)->first();
 
             return response($portafolio);

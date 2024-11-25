@@ -43,7 +43,7 @@ class PersonasController extends Controller
         }
     }
 
-    public function inscripcion(Request $request) {
+    public function inscripcionOnline(Request $request) {
         
         DB::connection('gds')->beginTransaction();
         
@@ -55,10 +55,10 @@ class PersonasController extends Controller
             $grupoZona = $this->createGrupoZona($request);            
             $this->createDireccionDomiciliar($request, $grupoZona->id ?? 0 ,$persona->id ?? 0);
 
-            $this->createDatosAcademicos($request,$persona_id ?? 0);
+            $this->createDatosAcademicos($request,$persona->id ?? 0);
 
             if($request->has('alergias') || $request->has('medicamento')) {
-                $this->createDatosMedicos($request,$persona_id ?? 0);
+                $this->createDatosMedicos($request,$persona->id ?? 0);
             }
 
             $this->createContactoEmergencia($request,$persona->id ?? 0);
@@ -69,9 +69,11 @@ class PersonasController extends Controller
                 return response(['errors' => $this->bagValidations],422);
             }
 
+            $this->inscribir($persona->id,$request->portafolio_id);
+
             DB::connection('gds')->commit();
             
-            return response('todo se credo de forma exitosa');
+            return response('Se ha realizado la inscripción de forma exitosa');
 
         } catch (\Throwable $th) {
 
@@ -177,72 +179,7 @@ class PersonasController extends Controller
             return response($th->getMessage());
         }
     }
-
-    public function preInscripcion (Request $request) {
-        $request->validate([
-            'primer_nombre' => 'required|string|max:45',
-            'primer_apellido' => 'required|string|max:45',
-            'cui' => ['required','numeric','digits:13',new ValidateCui,'unique:per_personas,cui'],
-            'correo' => 'required|email',
-            'celular' => 'required|numeric|digits:8',
-            'portafolio_id' => 'required|exists:esc_portafolio,id'
-        ]);
-
-        try {
-            
-            $persona = PerPersonas::create([
-                'primer_nombre'     => ucfirst(strtolower(trim($request->primer_nombre))),
-                'segundo_nombre'    => ucfirst(strtolower(trim($request->segundo_nombre))) ?? '',
-                'tercer_nombre'     => ucfirst(strtolower(trim($request->tercer_nombre))) ?? '',
-                'primer_apellido'   => ucfirst(strtolower(trim($request->primer_apellido))),
-                'segundo_apellido'  => ucfirst(strtolower(trim($request->segundo_apellido))) ?? '',
-                'apellido_casada'   => ucwords(strtolower(trim($request->apellido_casada))) ?? '',
-                'cui' => $request->cui,
-                'status_id' => 1  
-            ]);
-
-            if($persona){
-
-                $datos_contacto = $persona->datosContacto()->create([
-                    'celular' => $request->celular,
-                    'correo' => $request->correo
-                ]);
-
-                if($datos_contacto){
-
-                    $inscripcion = EscIncripciones::create([
-                        'persona_id' => $persona->id,
-                        'portafolio_id' => $request->portafolio_id,
-                    ]);
-
-                    if($inscripcion){
-
-                        return response([
-                            'status' => 'ok',
-                            'message' => 'Preincripcion realizada correctamente'
-                        ]);
-                    }
-
-
-                } else{
-                    return response([
-                        'status' => 'error',
-                        'message' => 'Error al intentar crear el registro de datos contacto'
-                    ]);
-                    
-                }
-            }
-
-            return response([
-                        'status' => 'error',
-                        'message' => 'Error al intentar crear el registro de persona'
-                    ]);
-
-        } catch (\Throwable $th) {
-            return response($th->getMessage());
-        }
-    }
-
+    
     public function createPersona(Request $request) {
 
         $validations = Validator::make($request->all(),[
@@ -276,6 +213,7 @@ class PersonasController extends Controller
             'grupo_etnico_id'   => $request->etnia_id ?? '',
             'no_interlocutor'   => $request->no_interlocutor ?? '',
             'di_direccion_id'   => $request->di_direccion_id,
+            'status_id'         => 1,
         ]);
 
         return $persona;
@@ -400,7 +338,6 @@ class PersonasController extends Controller
             'responsable.parentesco_id' => 'required',
             'responsable.cui' => ['required','numeric','digits:13',new ValidateCui],
             'responsable.nombre' => 'required|string|max:150',
-            'responsable.zona_id' => 'required',
             'responsable.direccion_domiciliar' => 'required|string|max:255',
             'responsable.celular' => 'required|numeric|digits:8',
             'responsable.correo' => 'string|email',
@@ -417,10 +354,10 @@ class PersonasController extends Controller
             'parentesco_id' => $request->responsable['parentesco_id'],
             'cui' => $request->responsable['cui'],
             'nombre' => ucfirst(strtolower(trim($request->responsable['nombre']))),
-            'zona_id' => $request->responsable['zona_id'],
+            'zona_id' => $request->responsable['zona_id'] ?? null,
             'direccion_domiciliar' => strtoupper(trim($request->responsable['direccion_domiciliar'])),
             'celular' => trim($request->responsable['celular']),
-            'correo' => strtolower(trim($request->responsable['correo'])),
+            'correo' => strtolower(trim($request->responsable['correo'] ?? '')),
             'sexo' => $request->responsable['sexo'],
 
         ]);
@@ -436,7 +373,6 @@ class PersonasController extends Controller
         $validations = Validator::make($request->all(),[
             'emergencia.cui' => ['required','numeric','digits:13',new ValidateCui],
             'emergencia.nombre' => 'required|string|max:150',
-            'emergencia.zona_id' => 'required',
             'emergencia.direccion_domiciliar' => 'required|string|max:255',
             'emergencia.celular' => 'required|numeric|digits:8',
             'emergencia.correo' => 'string|email',
@@ -454,10 +390,10 @@ class PersonasController extends Controller
             'parentesco_id' => $request->emergencia['parentesco_id'],
             'cui' => $request->emergencia['cui'],
             'nombre' => ucfirst(strtolower(trim($request->emergencia['nombre']))),
-            'zona_id' => $request->emergencia['zona_id'],
+            'zona_id' => $request->emergencia['zona_id'] ?? null,
             'direccion_domiciliar' => strtoupper(trim($request->emergencia['direccion_domiciliar'])),
             'celular' => trim($request->emergencia['celular']),
-            'correo' => strtolower(trim($request->emergencia['correo'])),
+            'correo' => strtolower(trim($request->emergencia['correo'] ?? '')),
             'sexo' => $request->emergencia['sexo'],
 
         ]);
@@ -488,12 +424,26 @@ class PersonasController extends Controller
             'escolaridad_id' => $request->escolaridad_id,
             'persona_id' => $persona_id,
             'titulo' => strtoupper($request->titulo) ?? '',
+            'tipo_establecimiento' => $request->tipo_establecimiento,
         ]);
 
         if($datosAcademicos) {
             return $datosAcademicos;
         }
 
+    }
+
+    public function inscribir (int $persona_id, int $portafolio_id) {
+
+        $inscribir = EscIncripciones::create([
+            'persona_id' => $persona_id,
+            'portafolio_id' => $portafolio_id,
+            'usuario_id' => null,
+        ]);
+
+        if($inscribir) {
+            return $inscribir;
+        }
     }
 
     public function update(Request $request, PerPersonas $persona) {

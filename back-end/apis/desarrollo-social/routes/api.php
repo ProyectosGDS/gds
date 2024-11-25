@@ -37,7 +37,7 @@ Route::get('departamentos/{departamento}',[DepartamentosController::class,'show'
 Route::post('personas',[PersonasController::class,'store']);
 Route::post('consulta-beneficiario-unico',[HistorialBeneficiarioUnicoController::class,'show']);
 Route::post('pre-inscripcion',[PersonasController::class,'preInscripcion']);
-Route::post('inscripcion',[PersonasController::class,'inscripcion']);
+Route::post('inscripcion',[PersonasController::class,'inscripcionOnline']);
 Route::get('campos-registro',[PersonasController::class,'camposRegistro']);
 
 Route::prefix('direcciones')->group(function(){
