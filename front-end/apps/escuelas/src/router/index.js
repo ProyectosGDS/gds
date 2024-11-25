@@ -19,7 +19,7 @@ const router = createRouter({
 					name: 'Escuelas',
 					component: () => import('@/views/escuelas/Escuelas.vue'),
 					meta: {
-						auth : false
+						auth : true
 					}
 				},
 				{
@@ -134,32 +134,15 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
 
-	const auth = useAuthStore()
-
-	if(to.path === '/'){
-		if(localStorage.getItem('direccion_id')){
-			if (localStorage.getItem('escuelas') === 'true') {
-				return { name : 'Escuelas'}
-			} else {
-				return { name : 'Edit'}
-			}
-		} else {
-			return  { name : 'Login' }
-		}
+	const auth = useAuthStore()	
+		
+	if(!(document.cookie.split('=')[0] === 'access_token') && to.name != 'Login') {
+		return { name : 'Login' }
 	}
 
-	if(to.name == 'Escuelas'){
-		if (localStorage.getItem('escuelas') === 'true') {
-			return true
-		} else {
-			return { name : 'Edit'}
-		}
-	}
-
-	if (to.meta.auth) {
-
+	if(to.meta.auth) {
 		const hasPermission = auth.permisos.includes(to.name);
-		console.log(hasPermission)
+		console.log(auth.permisos)
 		if (!hasPermission) {
 
 			return { name : 'Login'};
@@ -167,7 +150,7 @@ router.beforeEach((to, from) => {
 	}
 
 	return true
-  
+	  
 })
 
 export default router

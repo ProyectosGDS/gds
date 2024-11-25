@@ -10,9 +10,10 @@
 
 
 	onMounted(() => {
-		if (localStorage.getItem('direccion_id')){
-			auth.validateAuth()
-		}
+		
+		auth.validateAuth()
+		console.log(auth.permisos);
+		
 	})
 </script>
 

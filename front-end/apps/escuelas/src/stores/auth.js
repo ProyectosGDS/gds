@@ -56,7 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
 			localStorage.setItem('direccion_id',userData.value.di_direccion_id)
 			roles.value = user.value.roles
 			permisos.value = roles.value.map(role => role.permisos.map(permiso => permiso.nombre)).flat(Infinity)
-			permisos.value = Array.from(new Set(permisos.value))
+			permisos.value = Array.from(new Set(permisos.value))			
 		}) 		
 		.catch(error => {
 			resetData()

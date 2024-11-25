@@ -1,8 +1,11 @@
 @layer base {
     html {
-      font-family: 'Jost', sans-serif;
-      /* scroll-behavior: smooth; */
-      background-color: #f4f5f7;
+        background-color: #f4f5f7;
+    }
+
+    @font-face {
+        font-family: 'Jost';
+        src: url('./font/Jost/Jost-VariableFont_wght.ttf') format('woff2');
     }
 }
 /* Buttons colors */
@@ -36,7 +39,7 @@
 }
 
 .input {
-    @apply border px-3 rounded text-gray-500 w-full focus-within:border-violet-400 border-gray-200 disabled:bg-gray-50;
+    @apply border px-3 h-14 rounded text-gray-500 w-full focus-within:border-violet-400 border-violet-200 disabled:bg-gray-50;
 }
 
 .btn {
