@@ -15,6 +15,7 @@ class PerDatosAcademicos extends Model
         'titulo',
         'escolaridad_id',
         'persona_id',
+        'tipo_establecimiento'
     ];
 
     public function escolaridad() {

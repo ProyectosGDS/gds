@@ -37,44 +37,49 @@ class CursosController extends Controller
         }
     }
 
-    public function cursesDetails( $programa_id,  $nivel_id,  $seccion_id) {
+    // public function cursesDetails( $programa_id,  $nivel_id,  $seccion_id) {
 
-        $query = "
-            SELECT
-                c.nombre curso,
-                CONCAT(h.dia,' ',h.hora_inicial,' - ',h.hora_final) horario,
-                i.nombre instructor,
-                modalidad
-            FROM esc_portafolio p
-            INNER JOIN esc_cursos c
-                on p.curso_id = c.id
-            INNER JOIN esc_instructores i
-                ON p.instructor_id = i.id
-            INNER JOIN esc_horarios h
-                ON p.horario_id = h.id
-            WHERE p.programa_id = $programa_id
-            AND p.nivel_id = $nivel_id
-            AND p.seccion_id = $seccion_id
-            AND p.deleted_at IS NULL
-        ";
+    //     $query = "
+    //         SELECT
+    //             c.nombre curso,
+    //             CONCAT(h.dia,' ',h.hora_inicial,' - ',h.hora_final) horario,
+    //             i.nombre instructor,
+    //             modalidad
+    //         FROM esc_portafolio p
+    //         INNER JOIN esc_cursos c
+    //             on p.curso_id = c.id
+    //         INNER JOIN esc_instructores i
+    //             ON p.instructor_id = i.id
+    //         INNER JOIN esc_horarios h
+    //             ON p.horario_id = h.id
+    //         WHERE p.programa_id = ?
+    //         AND p.nivel_id = ?
+    //         AND p.seccion_id = ?
+    //         AND p.deleted_at IS NULL
+    //     ";
 
-        $cursesDetails = DB::connection('gds')->select($query);
+    //     $cursesDetails = DB::connection('gds')->statement($query,[$programa_id,$nivel_id,$seccion_id]);
 
-        return response($cursesDetails);
+    //     return response($cursesDetails);
 
-    }
+    // }
 
     public function store(Request $request) {
         
         $request->validate([
-            'nombre' => 'required|string|max:80'
+            'nombre' => 'required|string|max:80',
+            'descripcion' => 'required|string|max:255',
+            'categoria_id' => 'required|number|'
         ]);
 
         try {
             
             $curso = EscCursos::create([
                 'nombre' => strtoupper(trim($request->nombre)),
-                'descripcion' => $request->descripcion ?? '',
+                'descripcion' => $request->descripcion,
+                'cupo' => $request->cupo ?? '',
+                'categoria_id' => $request->categoria_id,
+
             ]);
 
             if($curso){

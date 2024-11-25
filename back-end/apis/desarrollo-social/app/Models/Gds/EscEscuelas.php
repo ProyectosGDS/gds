@@ -28,4 +28,8 @@ class EscEscuelas extends Model
     public function direccion() {
         return $this->belongsTo(DiDirecciones::class,'direccion_id','id');
     }
+
+    public function alumnos() {
+        return;
+    }
 }

@@ -5,6 +5,9 @@ module.exports = {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
+    fontFamily: {
+      sans : ['Jost']
+    },
     extend: {
       colors: {
         'gray-muni' : '#f3f5f7',

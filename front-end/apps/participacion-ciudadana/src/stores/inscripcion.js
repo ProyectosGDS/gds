@@ -1,8 +1,11 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useGlobalStore } from './global'
 
 export const useInscripcionStore = defineStore('inscripcion', () => {
+
+    const global = useGlobalStore()
     
     const datos = ref({
         pais_id : 1,
@@ -18,6 +21,7 @@ export const useInscripcionStore = defineStore('inscripcion', () => {
         emergencia : {
             sexo : 'F',
         },
+        tipo_establecimiento : 'PRIVADO'
     })
 
     const cui = ref('')
@@ -52,6 +56,7 @@ export const useInscripcionStore = defineStore('inscripcion', () => {
             emergencia : {
                 sexo : 'F',
             },
+            tipo_establecimiento : 'PRIVADO'
         }
 
         openModal.value = {
@@ -111,12 +116,15 @@ export const useInscripcionStore = defineStore('inscripcion', () => {
 
     function modal (item) {
         datos.value.di_direccion_id = item.programa.di_direccion_id
+        datos.value.portafolio_id = item.id
         openModal.value.form = true 
     }
 
     async function store () {
         try {
             const response = await axios.post('inscripcion',datos.value)
+            global.setAlert(response.data,'success')
+            resetData()
             console.log(response.data)
 
         } catch (error) {

@@ -118,7 +118,7 @@ onMounted(() => {
 <template>
     <section class="lg:px-7">
         <!-- FILTERS -->
-        <div class="lg:flex justify-between gap-5">
+        <div class=" space-y-2 lg:space-y-0 lg:flex justify-between gap-5">
             <select v-model="categoria" class="input uppercase">
                 <option v-for="categoria in props.categorias" :value="categoria.id">{{ categoria.nombre }}</option>
                 <option value="" selected>Todos los cursos</option>
@@ -128,17 +128,21 @@ onMounted(() => {
         <!-- END FILTERS -->
         <hr class="my-5">
         <!-- CARDS -->
+        <Loading-Bar class="bg-blue-muni h-1" v-if="props.loading" />
         <div class="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-4">
-            <Card v-for="curso in paginatedData" class="overflow-hidden border">
+            <Card v-for="curso in paginatedData" class="overflow-hidden border border-blue-muni">
                 <template #header>
-                    <img src="/public/img/foto-card.jpg" :alt="curso.nombre" class=" object-cover h-32 w-auto object-center">
+                    <img :src="curso.curso.imagen ? curso?.curso?.urlImage : '/public/img/foto-card.jpg'" 
+                         :alt="curso.nombre" 
+                         class=" object-cover h-40 w-auto object-center">
                 </template>
                 <div class="p-4">
                     <span class=" text-wrap text-lg font-medium text-blue-muni">
                         {{ `${curso.curso.nombre} ${curso.nivel.nombre}` }}
                     </span>
-                    <p class="">
-                        {{ curso.curso.descripcion }}
+                    <p>
+                        {{ curso.curso.descripcion.slice(0,110) }}
+                        ...
                     </p>
                 </div>
                 <template #footer>

@@ -25,7 +25,6 @@ import DataTable from './components/DataTable.vue'
 import Input from './components/Input.vue'
 import Card from './components/Card.vue'
 import ValidateErrors from './components/ValidateErrors.vue'
-import Logo from './components/Logo.vue'
 import Switch from './components/Switch.vue'
 import LoadingBar from './components/LoadingBar.vue'
 
@@ -53,7 +52,6 @@ app.component('Icon', FontAwesomeIcon)
 .component('Card', Card)
 .component('Validate-Errors', ValidateErrors)
 .component('Date-Picker', VueDatePicker)
-.component('Logo', Logo)
 .component('Switch', Switch)
 .component('Loading-Bar', LoadingBar)
 
